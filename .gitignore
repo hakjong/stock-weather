@@ -1,0 +1,13 @@
+# General
+*.swp
+
+# Python
+__pycache__/
+venv/
+
+# idea
+.idea/
+*.iml
+
+# avoid lisence
+crawler/polarity.csv
