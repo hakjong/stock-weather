@@ -12,11 +12,12 @@ CREATE TABLE stock (
 CREATE TABLE news (
     id          INT            NOT NULL AUTO_INCREMENT,
     title       VARCHAR(4096),
+    title_ori  VARCHAR(4096),
     link        VARCHAR(2048),
     description VARCHAR(10240),
     pubdate     TIMESTAMP,
     hash        CHAR(32),
-    score       INT,
+    sentiment   CHAR(3),
     fk_stock_id INT,
     UNIQUE (hash),
     PRIMARY KEY (id),
