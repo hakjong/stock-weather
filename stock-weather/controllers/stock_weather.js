@@ -57,8 +57,11 @@ exports.stock_weather = function(req, res) {
   function stock_weather_handler() {
     var stock_name = intent.slots.stock_item.value;
 
-    var sql = "SELECT sentiment, count(*) FROM news WHERE fk_stock_id IN " +
-      "(SELECT id FROM stock WHERE name='"+ stock_name +"') GROUP BY sentiment;";
+    var sql = "SELECT news.sentiment as sentiment, count(*) as cnt FROM news JOIN (" +
+      "SELECT id FROM news WHERE fk_stock_id IN (" +
+      "SELECT id FROM stock WHERE name='" + stock_name + "'" +
+      ") ORDER BY pubdate DESC LIMIT 100" +
+      ") AS lim ON news.id=lim.id GROUP BY sentiment;";
 
     db.query(sql, function (err, result) {
       if (err) {
@@ -67,8 +70,8 @@ exports.stock_weather = function(req, res) {
 
       var s = {sum: 0};
       for (var i = 0; i < result.length; ++i) {
-        s[result[i].sentiment] = result[i]['count(*)'];
-        s.sum += result[i]['count(*)'];
+        s[result[i].sentiment] = result[i].cnt;
+        s.sum += result[i].cnt;
       }
 
       var percentage = parseInt((s.NEG / s.sum) * 100);
