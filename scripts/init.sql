@@ -26,3 +26,5 @@ CREATE TABLE news (
 
 INSERT INTO stock VALUES (NULL, '카카오', '카카오,카톡,카카오톡');
 INSERT INTO stock VALUES (NULL, '네이버', '네이버,클로바');
+INSERT INTO stock VALUES (NULL, '미래에셋대우', '미래에셋대우');
+
