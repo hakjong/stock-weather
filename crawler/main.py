@@ -32,7 +32,6 @@ def main():
 
 
 def fetch_news(keyword):
-    # TODO: Timeout 걸어서 한 번 retry 하자.. (자주 멎음)
     uri = 'https://openapi.naver.com/v1/search/news.json?query=%s&display=100&sort=sim' % keyword
     headers = {
         'X-Naver-Client-Id': '***',

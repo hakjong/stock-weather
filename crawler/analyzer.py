@@ -43,7 +43,7 @@ def analyze(title, text):
     else:
         result = 'NEG'
 
-    print(result + ' (%d/%d)\t: ' % (pos, neg) + title)
+    # print(result + ' (%d/%d)\t: ' % (pos, neg) + title)
 
     return result
 
