@@ -57,10 +57,34 @@ exports.stock_weather = function(req, res) {
   function stock_weather_handler() {
     var stock_name = intent.slots.stock_item.value;
 
-    gen_res(res, {
-      speech: stock_name + " 날씨 알려줄게요.",
-      shouldEndSession: false
-    })
+    var sql = "SELECT sentiment, count(*) FROM news WHERE fk_stock_id IN " +
+      "(SELECT id FROM stock WHERE name='"+ stock_name +"') GROUP BY sentiment;";
+
+    db.query(sql, function (err, result) {
+      if (err) {
+        return;
+      }
+
+      var s = {sum: 0};
+      for (var i = 0; i < result.length; ++i) {
+        s[result[i].sentiment] = result[i]['count(*)'];
+        s.sum += result[i]['count(*)'];
+      }
+
+      var percentage = parseInt((s.NEG / s.sum) * 100);
+
+      var weather;
+      if (percentage < 30)
+        weather = '맑아요';
+      else if (percentage < 50)
+        weather = '흐려요';
+      else
+        weather = '비가 올 것 같아요';
+
+      gen_res(res, {
+        speech: '오늘 ' + stock_name + ' 는 ' + weather + '. 비 올 확률은 ' + percentage + ' 퍼센트 입니다.'
+      })
+    });
   }
 };
 
