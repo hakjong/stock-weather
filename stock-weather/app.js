@@ -12,12 +12,17 @@ db = mysql.createConnection({
   host: "127.0.0.1",
   user: "root",
   password: "dbmaster",
-  database: "stock_weather"
+  database: "stock_weather",
+  port: 13306
 });
 
 db.connect(function(err) {
   if (err) throw err;
   console.log("DB connected");
+
+  setInterval(function () {
+      db.query('SELECT 1');
+  }, 5000);
 });
 
 app.use(logger('dev'));
