@@ -5,6 +5,10 @@
 __pycache__/
 venv/
 
+# node.js
+package-lock.json
+node_modules/
+
 # idea
 .idea/
 *.iml

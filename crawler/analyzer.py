@@ -1,6 +1,6 @@
 from konlpy.tag import Kkma
-import pymysql
 import csv
+
 
 kkma = Kkma()
 
@@ -24,10 +24,10 @@ def gen_pol_dic():
 pol_dic = gen_pol_dic()
 
 
-def analyze(text):
-    p = kkma.pos(text)
-    pos = 0;
-    neg = 0;
+def analyze(title, text):
+    p = kkma.pos(title + ' ' + text)
+    pos = 0
+    neg = 0
     for p_item in p:
         word = p_item[0]
         if word not in pol_dic:
@@ -38,10 +38,12 @@ def analyze(text):
         else:
             neg += 1
 
-    print('POS: %d / NEG: %d' % (pos, neg))
-
     if pos > neg:
-        return 'POS'
+        result = 'POS'
     else:
-        return 'NEG'
+        result = 'NEG'
+
+    print(result + ' (%d/%d)\t: ' % (pos, neg) + title)
+
+    return result
 

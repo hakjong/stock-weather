@@ -4,6 +4,8 @@ import hashlib
 import re
 from datetime import datetime
 
+import analyzer
+
 
 def main():
     conn = pymysql.connect(
@@ -50,25 +52,29 @@ def fetch_news(keyword):
 
 def store_news(conn, key, items):
     with conn.cursor() as cur:
-        sql = '''INSERT INTO news VALUES (NULL, %s, %s, %s, %s, %s, %s, %s)'''
+        sql = '''INSERT INTO news VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s)'''
         for news in items:
-            title = remove_tag(news['title'])
+            title = pick_hangul(news['title'])
+            title_ori = news['title']
             link = news['link']
-            description = remove_tag(news['description'])
+            description = pick_hangul(news['description'])
             pubdate = datetime.strptime(news['pubDate'], '%a, %d %b %Y %H:%M:%S %z')
 
             h = hashlib.md5()
             h.update(link.encode('utf-8'))
             link_hash = h.hexdigest()
 
+            sentiment = analyzer.analyze(title, description)
+
             try:
                 cur.execute(sql, (
                     title,
+                    title_ori,
                     link,
                     description,
                     pubdate.strftime('%Y-%m-%d %H:%M:%S'),
                     link_hash,
-                    None,
+                    sentiment,
                     str(key)))
             except pymysql.err.IntegrityError as e:
                 # 중복 뉴스는 저장하지 않는다. 나머지 에러는 raise
@@ -78,8 +84,10 @@ def store_news(conn, key, items):
     conn.commit()
 
 
-def remove_tag(origin):
-    return re.sub('<\S+>', '', origin)
+def pick_hangul(origin):
+    s = re.sub('[^가-힣]', ' ', origin)
+    s = re.sub('\s+', ' ', s)
+    return re.sub('^\s+', '', s)
 
 
 if __name__ == '__main__':
